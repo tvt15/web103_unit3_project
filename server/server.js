@@ -2,7 +2,8 @@ import express from 'express'
 import path from 'path'
 import favicon from 'serve-favicon'
 import dotenv from 'dotenv'
-
+import eventsRouter from './routes/eventRoutes.js'
+import locationsRouter from './routes/locationsRoutes.js'
 // import the router from your routes file
 
 
@@ -11,6 +12,8 @@ dotenv.config()
 const PORT = process.env.PORT || 3000
 
 const app = express()
+app.use('/api', eventsRouter);
+app.use('/api', locationsRouter);
 
 app.use(express.json())
 
