@@ -1,8 +1,7 @@
-import { getEventById } from "../services/EventsAPI";
 import React, { useState, useEffect } from 'react';
 import unitygrid from '../assets/unitygrid.jpg';
 import { useParams } from 'react-router-dom';  // To get the location from the URL
-import { getEventsByLocation } from "../services/EventsAPI";  // Import the API function
+import { getEventById } from '../services/EventsAPI'
 
 const EventDetails = () => {
     const { locationId } = useParams();  // Get the locationId from the URL
@@ -13,7 +12,9 @@ const EventDetails = () => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const eventsData = await getEventsByLocation(locationId);  // Fetch events for the location
+                console.log("here1",locationId)
+                const eventsData = await getEventById(locationId);  // Fetch events for the location
+                console.log("here",eventsData)
                 setEvents(eventsData);
                 setLoading(false);
             } catch (error) {
@@ -33,7 +34,7 @@ const EventDetails = () => {
             {events.length > 0 ? (
                 <ul>
                     {events.map((event, index) => (
-                        <li key={index}>
+                        <li key={event.location_id}>
                             <h2>{event.name}</h2>
                             <p>{event.description}</p>
                             <p>Date: {new Date(event.date).toLocaleDateString()}</p>

@@ -1,10 +1,11 @@
 import { pool } from './database.js'
 import './dotenv.js'
-import FairData from '../data/fair.js'
+import { FairData } from '../data/fair.js'
+import { EventData } from '../data/fair.js'
 
 const createFairTable = async () => {
     const createTableQuery = `
-        DROP TABLE IF EXISTS locations;
+        DROP TABLE IF EXISTS locations CASCADE;
 
         CREATE TABLE IF NOT EXISTS locations (
             id SERIAL PRIMARY KEY,
@@ -51,16 +52,57 @@ const seedFairTable = async () => {
         })
     })
 }
-// const getAllLocations = async () => {
-//     try {
-//         const result = await pool.query(`SELECT * FROM locations`);
-//         //res.json(result.rows);
-//         console.log(result.rows)
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send('Server error');
-//     }
-// };
+const createEventTable = async () => {
+    const createEventQuery = `
+        DROP TABLE IF EXISTS events;
 
-seedFairTable()
+        CREATE TABLE IF NOT EXISTS events (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            description VARCHAR(255) NOT NULL,
+            date DATE NOT NULL,
+            time TIME NOT NULL,
+            location_id INTEGER NOT NULL,
+            image TEXT,
+            FOREIGN KEY (location_id) REFERENCES locations(id)
+        )
+    `
+
+    try {
+        const res = await pool.query(createEventQuery)
+        console.log('🎉 Events table created successfully')
+    } catch (err) {
+        console.error('⚠️ error creating Events table', err)
+    }
+}
+const seedEventsTable = async () => {
+    await seedFairTable()
+    await createEventTable()
+
+    EventData.forEach((event) => {
+        const insertQuery = {
+            text: 'INSERT INTO events (name, description, date, time, location_id, image) VALUES ($1, $2, $3, $4, $5, $6)'
+        }
+
+        const values = [
+            event.name,
+            event.description,
+            event.date,
+            event.time,
+            event.location_id,
+            event.image
+        ]
+
+        pool.query(insertQuery, values, (err, res) => {
+            if (err) {
+                console.error('⚠️ error inserting event', err)
+                return
+            }
+            console.log(`✅ ${event.name} added successfully`)
+        })
+    })
+}
+
+
+seedEventsTable()
 // getAllLocations()

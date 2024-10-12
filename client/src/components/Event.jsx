@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import '../css/Event.css'
+import { getEventById } from '../services/EventsAPI'
+import * as dates from "../services/dates"
 
 const Event = (props) => {
 
@@ -7,17 +9,18 @@ const Event = (props) => {
     const [time, setTime] = useState([])
     const [remaining, setRemaining] = useState([])
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const eventData = await EventsAPI.getEventsById(props.id)
-                setEvent(eventData)
-            }
-            catch (error) {
-                throw error
-            }
-        }) ()
-    }, [])
+    // useEffect(() => {
+    //     (async () => {
+    //         try {
+    //             const eventData = await getEventById(props.id)
+    //             console.log("props",props)
+    //             setEvent(eventData)
+    //         }
+    //         catch (error) {
+    //             throw error
+    //         }
+    //     }) ()
+    // }, [])
 
     useEffect(() => {
         (async () => {
@@ -50,7 +53,7 @@ const Event = (props) => {
 
             <div className='event-information-overlay'>
                 <div className='text'>
-                    <h3>{event.title}</h3>
+                    <h3>{event.name}</h3>
                     <p><i className="fa-regular fa-calendar fa-bounce"></i> {event.date} <br /> {time}</p>
                     <p id={`remaining-${event.id}`}>{remaining}</p>
                 </div>

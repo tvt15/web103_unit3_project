@@ -12,6 +12,18 @@ export const getAllEvents = async (req, res) => {
     }
 };
 
+export const getEventById = async(req,res)=>{
+    const location_id = req.params.id
+    try{
+        const result = await pool.query(`SELECT * FROM events WHERE location_id = $1`,[location_id])
+        if (result.rows.length===0){
+            return res.status(404).send("Event not found");
+        }
+        return res.json(result.rows)
+    }
+    catch(error){}
+}
+
 // export default{
 //     getAllEvents
 // }
